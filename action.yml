@@ -1,13 +1,15 @@
 name: 'shubham90-helloworld'
-description: 'Greet someone and record the time'
+description: 'Nuget auth for azure artifacts feed'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  azure-artifacts-feed-url:
+    description: 'Fullyqualified URL to the Azure Artifacts feed' 
     required: true
-    default: 'World'
-outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+  azure-devops-org-url:
+    description: 'Organization url' 
+    required: true
+  azure-devops-token: 
+    description: 'Paste personal access token of the user as value of secret variable:AZURE_DEVOPS_TOKEN' 
+    required: true 
 runs:
   using: 'node12'
   main: 'index.js'
