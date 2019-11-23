@@ -137,7 +137,7 @@ var downloadFile = function(url) {
     console.log("download Path file download: " + downloadPath);
     mkdir("-p", path.join(downloadPath, "file"));
 
-    var result = syncRequest("GET", url);
+    var result = syncRequest('GET', url);
     console.log("Restult: " + result);
     fs.writeFileSync(targetPath, result.getBody());
 
