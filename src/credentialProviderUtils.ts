@@ -42,20 +42,21 @@ export async function installCredProviderToUserProfile(overwrite: boolean) {
   // Only install netfx plugin on Windows
 
   const isWin = process.platform === "win32";
-
+  console.log(`process actual: '${process.platform}'`);
+ console.log(`process: '${isWin}'`);
   if (isWin) {
     const netFxSource = path.join(
       taskPluginsPir,
       "netfx",
       "CredentialProvider.Microsoft"
     );
-
+    console.log(`netfxSource: '${netFxSource}'`);
     const netFxDest = path.join(
       userPluginsDir,
       "netfx",
       "CredentialProvider.Microsoft"
     );
-
+    console.log(`netFxDest: '${netFxDest}'`);
     await copyCredProviderFiles(netFxSource, netFxDest, overwrite);
 
     console.log();
@@ -96,8 +97,8 @@ async function copyCredProviderFiles(source, dest, overwrite) {
           errorOnExist: true // we should have removed the destination already and there shouldn't be any files
         });
       } catch (ex) {
-        throw new Error(
-        );
+        console.log(ex);
+        throw new Error(ex.message);
       }
 }
 
