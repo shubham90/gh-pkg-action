@@ -244,7 +244,7 @@ async function main() {
   try {
     // download and extract the archive package
     var archiveSource = downloadArchive(
-      "https://vstsagenttools.blob.core.windows.net/tools/NuGetCredProvider/0.1.20/c.ziparchive.url",
+      "https://vstsagenttools.blob.core.windows.net/tools/NuGetCredProvider/0.1.20/c.zip",
       true
     );
     // copy the files
