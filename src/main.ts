@@ -128,17 +128,17 @@ var downloadFile = function(url) {
     console.log("Downloading file: " + url);
 
     // delete any previous partial attempt
-
+    console.log("target Path file download: " + targetPath);
     if (test("-f", targetPath)) {
       rm("-f", targetPath);
     }
 
     // download the file
-
+    console.log("download Path file download: " + downloadPath);
     mkdir("-p", path.join(downloadPath, "file"));
 
     var result = syncRequest("GET", url);
-
+    console.log("Restult: " + result);
     fs.writeFileSync(targetPath, result.getBody());
 
     // write the completed marker
@@ -263,6 +263,7 @@ async function main() {
     const payload = JSON.stringify(github.context.payload, undefined, 2);
     console.log(`The event payload: ${payload}`);
   } catch (error) {
+      console.log(error);
     core.setFailed(error.message);
   }
 }
