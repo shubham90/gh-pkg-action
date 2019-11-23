@@ -22,7 +22,7 @@ export async function installCredProviderToUserProfile(overwrite: boolean) {
   const taskPluginsPir = getTaskCredProviderPluginsDir();
 
   const userPluginsDir = getUserProfileNuGetPluginsDir();
-
+  console.log("user plugin dir: " + userPluginsDir);
   const netCoreSource = path.join(
     taskPluginsPir,
     "netcore",
@@ -42,8 +42,8 @@ export async function installCredProviderToUserProfile(overwrite: boolean) {
   // Only install netfx plugin on Windows
 
   const isWin = process.platform === "win32";
-  console.log(`process actual: '${process.platform}'`);
- console.log(`process: '${isWin}'`);
+  console.log("process actual: " +  process.platform);
+ console.log("process:" + isWin);
   if (isWin) {
     const netFxSource = path.join(
       taskPluginsPir,
@@ -104,7 +104,7 @@ async function copyCredProviderFiles(source, dest, overwrite) {
 
 export function getUserProfileNuGetPluginsDir(): string {
   const homeDir = os.homedir();
-
+ console.log("homedir: " + homeDir);
   return path.join(homeDir, ".nuget", "plugins");
 }
 
