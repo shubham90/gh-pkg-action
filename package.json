@@ -24,7 +24,8 @@
     "@types/q": "^1.5.2",
     "fs-extra": "8.1.0",
     "shelljs": "^0.3.0",
-    "sync-request": "3.0.1"
+    "sync-request": "3.0.1",
+    "request": "^2.65.0"
   },
   "devDependencies": {
     "@types/node": "^12.12.6",

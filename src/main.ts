@@ -1,6 +1,6 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
-
+var request = require("request");
 var fs = require("fs");
 var path = require("path");
 var shell = require("shelljs");
@@ -137,9 +137,7 @@ var downloadFile = function(url) {
     console.log("download Path file download: " + downloadPath);
     mkdir("-p", path.join(downloadPath, "file"));
 
-    var result = syncRequest('GET', url);
-    console.log("Restult: " + result);
-    fs.writeFileSync(targetPath, result.getBody());
+    request(url).pipe(fs.writeFileSync(targetPath));
 
     // write the completed marker
 
