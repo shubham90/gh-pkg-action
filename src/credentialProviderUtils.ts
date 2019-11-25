@@ -2,7 +2,7 @@ import * as fse from "fs-extra";
 import * as os from "os";
 import * as path from "path";
 import * as process from "process";
-import core from "@actions/core";
+const core = require("@actions/core");
 import { getConnectionDataForProtocol } from "./locationUtils";
 import { getPackagingAccessMappings } from "./packagingAccessMapping";
 import { getSystemAccessToken } from "./webapi";
