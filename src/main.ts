@@ -1,6 +1,6 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
-var request = require("request");
+var request = require('then-request');
 var fs = require("fs");
 var path = require("path");
 var shell = require("shelljs");
@@ -136,14 +136,17 @@ var downloadFile = function(url) {
     // download the file
 
     mkdir('-p', path.join(downloadPath, 'file'));
+    request('GET', url).done(function (res) {
+      fs.writeFileSync(targetPath, res.getBody());
+      fs.writeFileSync(marker, "");
+    });
+    //var result = syncRequest('GET', url);
 
-    var result = syncRequest('GET', url);
 
-    fs.writeFileSync(targetPath, result.getBody());
 
     // write the completed marker
 
-    fs.writeFileSync(marker, "");
+
   }
 
   return targetPath;
