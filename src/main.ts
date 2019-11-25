@@ -12,14 +12,14 @@ import {
 } from "./credentialProviderUtils";
 import { ProtocolType } from "./protocols";
 
-var shellAssert = function() {
+var shellAssert = function () {
   var errMsg = shell.error();
   if (errMsg) {
     throw new Error(errMsg);
   }
 };
 
-var cd = function(dir) {
+var cd = function (dir) {
   var cwd = process.cwd();
   if (cwd != dir) {
     console.log("");
@@ -31,7 +31,7 @@ var cd = function(dir) {
 
 exports.cd = cd;
 
-var rm = function(options, target) {
+var rm = function (options, target) {
   if (target) {
     shell.rm(options, target);
   } else {
@@ -43,7 +43,7 @@ var rm = function(options, target) {
 
 exports.rm = rm;
 
-var test = function(options, p) {
+var test = function (options, p) {
   var result = shell.test(options, p);
 
   shellAssert();
@@ -53,7 +53,7 @@ var test = function(options, p) {
 
 exports.test = test;
 
-var mkdir = function(options, target) {
+var mkdir = function (options, target) {
   if (target) {
     shell.mkdir(options, target);
   } else {
@@ -64,7 +64,7 @@ var mkdir = function(options, target) {
 
 exports.mkdir = mkdir;
 
-var cp = function(options, source, dest) {
+var cp = function (options, source, dest) {
   if (dest) {
     shell.cp(options, source, dest);
   } else {
@@ -76,7 +76,7 @@ var cp = function(options, source, dest) {
 
 exports.cp = cp;
 
-var run = function(cl, inheritStreams, noHeader) {
+var run = function (cl, inheritStreams, noHeader) {
   if (!noHeader) {
     console.log();
 
@@ -107,92 +107,52 @@ var run = function(cl, inheritStreams, noHeader) {
 exports.run = run;
 
 var downloadPath = path.join(__dirname, "_download");
-function wait(ms){
+function wait(ms) {
   var start = new Date().getTime();
   var end = start;
-  while(end < start + ms) {
+  while (end < start + ms) {
     end = new Date().getTime();
- }
+  }
 }
-var downloadFile = function(url) {
+var downloadFile = function (url) {
   // validate parameters
 
   if (!url) {
     throw new Error('Parameter "url" must be set.');
   }
 
-  // skip if already downloaded
-
   var scrubbedUrl = url.replace(/[/\:?]/g, "_");
 
   var targetPath = path.join(downloadPath, "file", scrubbedUrl);
- console.log("TargetPath 1: " + targetPath);
   var marker = targetPath + ".completed";
 
-  console.log("Downloading file: " + url);
-
   // delete any previous partial attempt
-  console.log("target Path file download: " + targetPath);
   if (test("-f", targetPath)) {
     rm("-f", targetPath);
   }
 
-    // download the file
+  // download the file
 
   mkdir('-p', path.join(downloadPath, 'file'));
-  
+
   console.log("Download begin for : " + url);
   var result = syncRequest('GET', url);
 
   fs.writeFileSync(targetPath, result.getBody());
 
-
-
-  // write the completed marker
-
   fs.writeFileSync(marker, '');
 
-  //console.log("Download Begin!");
- // request('GET', url).done(function (res) {
- //   console.log("DOWNLOADED:  " + url);
- //   fs.writeFileSync(targetPath, res.getBody());
-  //  fs.writeFileSync(marker, ""); 
-  //  console.log("after downloading this file: " + targetPath);
-  //});
-  //console.log("wait begin");
-  //wait(40000);
-  //console.log("Wait finish");
   return targetPath;
 };
 
 exports.downloadFile = downloadFile;
 
-var downloadArchive = function(url, omitExtensionCheck) {
+var downloadArchive = function (url) {
   // validate parameters
 
   if (!url) {
     throw new Error('Parameter "url" must be set.');
   }
-
-  var isZip;
-
-  var isTargz;
-
-  if (omitExtensionCheck) {
-    isZip = true;
-  } else {
-    if (url.match(/\.zip$/)) {
-      isZip = true;
-    } else if (
-      url.match(/\.tar\.gz$/) &&
-      (process.platform == "darwin" || process.platform == "linux")
-    ) {
-      isTargz = true;
-    } else {
-      throw new Error("Unexpected archive extension");
-    }
-  }
-
   // skip if already downloaded and extracted
 
   var scrubbedUrl = url.replace(/[/\:?]/g, "_");
@@ -217,32 +177,20 @@ var downloadArchive = function(url, omitExtensionCheck) {
 
     mkdir("-p", targetPath);
 
-    if (isZip) {
-      if (process.platform == "win32" && archivePath != null) {
-        let escapedFile = archivePath
-          .replace(/'/g, "''")
-          .replace(/"|\n|\r/g, ""); // double-up single quotes, remove double quotes and newlines
+    if (process.platform == "win32" && archivePath != null) {
+      let escapedFile = archivePath
+        .replace(/'/g, "''")
+        .replace(/"|\n|\r/g, ""); // double-up single quotes, remove double quotes and newlines
 
-        let escapedDest = targetPath
-          .replace(/'/g, "''")
-          .replace(/"|\n|\r/g, "");
+      let escapedDest = targetPath
+        .replace(/'/g, "''")
+        .replace(/"|\n|\r/g, "");
 
-        let command = `$ErrorActionPreference = 'Stop' ; try { Add-Type -AssemblyName System.IO.Compression.FileSystem } catch { } ; [System.IO.Compression.ZipFile]::ExtractToDirectory('${escapedFile}', '${escapedDest}')`;
+      let command = `$ErrorActionPreference = 'Stop' ; try { Add-Type -AssemblyName System.IO.Compression.FileSystem } catch { } ; [System.IO.Compression.ZipFile]::ExtractToDirectory('${escapedFile}', '${escapedDest}')`;
 
-        run(`powershell -Command "${command}"`, false, false);
-      } else {
-        run(`unzip ${archivePath} -d ${targetPath}`, false, false);
-      }
-    } else if (isTargz) {
-      var originalCwd = process.cwd();
-
-      cd(targetPath);
-
-      try {
-        run(`tar -xzf "${archivePath}"`, false, false);
-      } finally {
-        cd(originalCwd);
-      }
+      run(`powershell -Command "${command}"`, false, false);
+    } else {
+      run(`unzip ${archivePath} -d ${targetPath}`, false, false);
     }
 
     // write the completed marker
@@ -259,26 +207,22 @@ async function main() {
   try {
     // download and extract the archive package
     var archiveSource = downloadArchive(
-      "https://vstsagenttools.blob.core.windows.net/tools/NuGetCredProvider/0.1.20/c.zip",
-      true
+      "https://vstsagenttools.blob.core.windows.net/tools/NuGetCredProvider/0.1.20/c.zip"
     );
     // copy the files
     var taskRootPath: string = path.dirname(path.dirname(__dirname));
     var archiveDest = path.join(
-        taskRootPath,
+      taskRootPath,
       "./CredentialProviderV2/"
     );
     mkdir("-p", archiveDest);
     cp("-R", path.join(archiveSource, "*"), archiveDest);
 
     console.log(`Hello NuGet!`);
-    await installCredProviderToUserProfile(true);
+    await installCredProviderToUserProfile();
     await configureCredProvider(ProtocolType.NuGet);
-    // Get the JSON webhook payload for the event that triggered the workflow
-    const payload = JSON.stringify(github.context.payload, undefined, 2);
-    console.log(`The event payload: ${payload}`);
   } catch (error) {
-      console.log(error);
+    console.log(error);
     core.setFailed(error.message);
   }
 }

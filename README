@@ -1,4 +1,4 @@
-# Hello world javascript action
+# Hello world action
 
 This action prints "Hello World" or "Hello" + the name of a person to greet to the log.
 
@@ -16,6 +16,7 @@ The time we greeted you.
 
 ## Example usage
 
-uses: shubham90/gh-pkg-action@v1
-with:
-  who-to-greet: 'Mona the Octocat'
+uses: shubham90/gh-pkg-action@v2
+  with:
+    azure-devops-org-url: 'https://dev.azure.com/account_name'
+    azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'

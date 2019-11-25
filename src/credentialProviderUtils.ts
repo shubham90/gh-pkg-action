@@ -2,7 +2,7 @@ import * as fse from "fs-extra";
 import * as os from "os";
 import * as path from "path";
 import * as process from "process";
-const core = require("@actions/core");
+import core from "@actions/core";
 import { getConnectionDataForProtocol } from "./locationUtils";
 import { getPackagingAccessMappings } from "./packagingAccessMapping";
 import { getSystemAccessToken } from "./webapi";
@@ -18,7 +18,7 @@ export function getTaskCredProviderPluginsDir(): string {
   return path.join(taskRootPath, "CredentialProviderV2", "plugins");
 }
 
-export async function installCredProviderToUserProfile(overwrite: boolean) {
+export async function installCredProviderToUserProfile() {
   const taskPluginsPir = getTaskCredProviderPluginsDir();
 
   const userPluginsDir = getUserProfileNuGetPluginsDir();
@@ -35,15 +35,15 @@ export async function installCredProviderToUserProfile(overwrite: boolean) {
     "CredentialProvider.Microsoft"
   );
 
-  await copyCredProviderFiles(netCoreSource, netCoreDest, overwrite);
+  await copyCredProviderFiles(netCoreSource, netCoreDest);
 
   console.log();
 
   // Only install netfx plugin on Windows
 
   const isWin = process.platform === "win32";
-  console.log("process actual: " +  process.platform);
- console.log("process:" + isWin);
+  console.log("process actual: " + process.platform);
+  console.log("process:" + isWin);
   if (isWin) {
     const netFxSource = path.join(
       taskPluginsPir,
@@ -57,64 +57,47 @@ export async function installCredProviderToUserProfile(overwrite: boolean) {
       "CredentialProvider.Microsoft"
     );
     console.log(`netFxDest: '${netFxDest}'`);
-    await copyCredProviderFiles(netFxSource, netFxDest, overwrite);
+    await copyCredProviderFiles(netFxSource, netFxDest);
 
     console.log();
   }
 }
 
-async function copyCredProviderFiles(source, dest, overwrite) {
-  // File copy is potentially unreliable, so retry up to 3 times
+async function copyCredProviderFiles(source, dest) {
+  console.log(
+    `Removing '${dest}' before copying from '${source}' since overwrite is enabled`
+  );
 
-      if ((await fse.pathExists(dest)) && !overwrite) {
-        console.log(
-          `Skipping copying from '${source}' to '${dest}' because the destination already exists and overwrite is disabled`
-        );
+  try {
+    await fse.remove(dest);
+  } catch (ex) {
+    throw new Error(
+    );
+  }
 
-        return;
-      }
-      if (overwrite) {
-        console.log(
-          `Removing '${dest}' before copying from '${source}' since overwrite is enabled`
-        );
+  console.log(`Copying from '${source}' to '${dest}'`);
 
-        try {
-          await fse.remove(dest);
-        } catch (ex) {
-          throw new Error(
-          );
-        }
-      }
+  try {
+    await fse.copy(source, dest, {
+      recursive: true,
 
-      console.log(`Copying from '${source}' to '${dest}'`);
+      overwrite: false, // Intentional - if we're overwriting,
 
-      try {
-        await fse.copy(source, dest, {
-          recursive: true,
-
-          overwrite: false, // Intentional - if we're overwriting,
-
-          errorOnExist: true // we should have removed the destination already and there shouldn't be any files
-        });
-      } catch (ex) {
-        console.log(ex);
-        throw new Error(ex.message);
-      }
+      errorOnExist: true // we should have removed the destination already and there shouldn't be any files
+    });
+  } catch (ex) {
+    console.log(ex);
+    throw new Error(ex.message);
+  }
 }
 
 export function getUserProfileNuGetPluginsDir(): string {
   const homeDir = os.homedir();
- console.log("homedir: " + homeDir);
+  console.log("homedir: " + homeDir);
   return path.join(homeDir, ".nuget", "plugins");
 }
 
 export async function configureCredProvider(
-  protocol: ProtocolType
-) {
-  await configureCredProviderForSameOrganizationFeeds(protocol);
-}
-
-export async function configureCredProviderForSameOrganizationFeeds(
   protocol: ProtocolType
 ) {
   const connectionData = await getConnectionDataForProtocol(protocol);
@@ -124,11 +107,6 @@ export async function configureCredProviderForSameOrganizationFeeds(
   );
 
   const accessToken = getSystemAccessToken();
-
-  // To avoid confusion, only log the public access mapping URIs rather than all of them (e.g. host guid access mapping)
-
-  // which we might as well support just in case, yet users are extremely unlikely to ever use.
-
   const allPrefixes: string[] = [
     ...new Set(packagingAccessMappings.map(prefix => prefix.uri))
   ];
@@ -140,10 +118,6 @@ export async function configureCredProviderForSameOrganizationFeeds(
         .map(prefix => prefix.uri)
     )
   ];
-
-  const identityDisplayName =
-    connectionData.authenticatedUser.customDisplayName ||
-    connectionData.authenticatedUser.providerDisplayName;
   publicPrefixes.forEach(publicPrefix => console.log("  " + publicPrefix));
 
   console.log();
