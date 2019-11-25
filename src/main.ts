@@ -121,7 +121,7 @@ var downloadFile = function(url) {
   var scrubbedUrl = url.replace(/[/\:?]/g, "_");
 
   var targetPath = path.join(downloadPath, "file", scrubbedUrl);
-
+ console.log("TargetPath 1: " + targetPath);
   var marker = targetPath + ".completed";
 
   console.log("Downloading file: " + url);
@@ -137,7 +137,8 @@ var downloadFile = function(url) {
   mkdir('-p', path.join(downloadPath, 'file'));
   return request('GET', url).done(function (res) {
     fs.writeFileSync(targetPath, res.getBody());
-    fs.writeFileSync(marker, "");
+    fs.writeFileSync(marker, ""); 
+    console.log("after downloading this file: " + targetPath);
     return targetPath;
   });
 };
