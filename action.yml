@@ -1,4 +1,4 @@
-name: 'shubham90-helloworld'
+name: 'shubham90-nugetauth'
 description: 'Nuget Authenticate for Azure Artifacts feed'
 inputs:
   azure-devops-org-url:
