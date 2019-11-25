@@ -1,6 +1,5 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
-var request = require('then-request');
 var fs = require("fs");
 var path = require("path");
 var shell = require("shelljs");

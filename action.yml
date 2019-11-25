@@ -1,9 +1,6 @@
 name: 'shubham90-helloworld'
-description: 'Nuget auth for azure artifacts feed'
+description: 'Nuget Authenticate for Azure Artifacts feed'
 inputs:
-  azure-artifacts-feed-url:
-    description: 'Fullyqualified URL to the Azure Artifacts feed' 
-    required: true
   azure-devops-org-url:
     description: 'Organization url' 
     required: true
