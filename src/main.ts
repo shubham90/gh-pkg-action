@@ -149,7 +149,7 @@ var downloadFile = function(url) {
     console.log("after downloading this file: " + targetPath);
   });
   console.log("wait begin");
-  wait(20000);
+  wait(40000);
   console.log("Wait finish");
   return targetPath;
 };
