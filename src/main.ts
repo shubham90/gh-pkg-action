@@ -134,10 +134,12 @@ var downloadFile = function(url) {
     }
 
     // download the file
-    console.log("download Path file download: " + downloadPath);
-    mkdir("-p", path.join(downloadPath, "file"));
 
-    request(url).pipe(fs.writeFileSync(targetPath));
+    mkdir('-p', path.join(downloadPath, 'file'));
+
+    var result = syncRequest('GET', url);
+
+    fs.writeFileSync(targetPath, result.getBody());
 
     // write the completed marker
 
