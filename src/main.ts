@@ -141,16 +141,28 @@ var downloadFile = function(url) {
     // download the file
 
   mkdir('-p', path.join(downloadPath, 'file'));
-  console.log("Download Begin!");
-  request('GET', url).done(function (res) {
-    console.log("DOWNLOADED:  " + url);
-    fs.writeFileSync(targetPath, res.getBody());
-    fs.writeFileSync(marker, ""); 
-    console.log("after downloading this file: " + targetPath);
-  });
-  console.log("wait begin");
-  wait(40000);
-  console.log("Wait finish");
+  
+  console.log("Download begin for : " + url);
+  var result = syncRequest('GET', url);
+
+  fs.writeFileSync(targetPath, result.getBody());
+
+
+
+  // write the completed marker
+
+  fs.writeFileSync(marker, '');
+
+  //console.log("Download Begin!");
+ // request('GET', url).done(function (res) {
+ //   console.log("DOWNLOADED:  " + url);
+ //   fs.writeFileSync(targetPath, res.getBody());
+  //  fs.writeFileSync(marker, ""); 
+  //  console.log("after downloading this file: " + targetPath);
+  //});
+  //console.log("wait begin");
+  //wait(40000);
+  //console.log("Wait finish");
   return targetPath;
 };
 
