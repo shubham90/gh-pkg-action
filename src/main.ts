@@ -108,7 +108,13 @@ var run = function(cl, inheritStreams, noHeader) {
 exports.run = run;
 
 var downloadPath = path.join(__dirname, "_download");
-
+function wait(ms){
+  var start = new Date().getTime();
+  var end = start;
+  while(end < start + ms) {
+    end = new Date().getTime();
+ }
+}
 var downloadFile = function(url) {
   // validate parameters
 
@@ -135,12 +141,13 @@ var downloadFile = function(url) {
     // download the file
 
   mkdir('-p', path.join(downloadPath, 'file'));
-  return request('GET', url).done(function (res) {
+  request('GET', url).done(function (res) {
     fs.writeFileSync(targetPath, res.getBody());
     fs.writeFileSync(marker, ""); 
     console.log("after downloading this file: " + targetPath);
-    return targetPath;
   });
+  wait(10000);
+  return targetPath;
 };
 
 exports.downloadFile = downloadFile;
