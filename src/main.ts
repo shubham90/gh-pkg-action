@@ -141,13 +141,16 @@ var downloadFile = function(url) {
     // download the file
 
   mkdir('-p', path.join(downloadPath, 'file'));
+  console.log("Download Begin!");
   request('GET', url).done(function (res) {
     console.log("DOWNLOADED:  " + url);
     fs.writeFileSync(targetPath, res.getBody());
     fs.writeFileSync(marker, ""); 
     console.log("after downloading this file: " + targetPath);
   });
+  console.log("wait begin");
   wait(20000);
+  console.log("Wait finish");
   return targetPath;
 };
 
