@@ -124,32 +124,22 @@ var downloadFile = function(url) {
 
   var marker = targetPath + ".completed";
 
-  if (!test("-f", marker)) {
-    console.log("Downloading file: " + url);
+  console.log("Downloading file: " + url);
 
-    // delete any previous partial attempt
-    console.log("target Path file download: " + targetPath);
-    if (test("-f", targetPath)) {
-      rm("-f", targetPath);
-    }
+  // delete any previous partial attempt
+  console.log("target Path file download: " + targetPath);
+  if (test("-f", targetPath)) {
+    rm("-f", targetPath);
+  }
 
     // download the file
 
-    mkdir('-p', path.join(downloadPath, 'file'));
-    request('GET', url).done(function (res) {
-      fs.writeFileSync(targetPath, res.getBody());
-      fs.writeFileSync(marker, "");
-    });
-    //var result = syncRequest('GET', url);
-
-
-
-    // write the completed marker
-
-
-  }
-
-  return targetPath;
+  mkdir('-p', path.join(downloadPath, 'file'));
+  return request('GET', url).done(function (res) {
+    fs.writeFileSync(targetPath, res.getBody());
+    fs.writeFileSync(marker, "");
+    return targetPath;
+  });
 };
 
 exports.downloadFile = downloadFile;
@@ -192,8 +182,7 @@ var downloadArchive = function(url, omitExtensionCheck) {
     // download the archive
 
     var archivePath = downloadFile(url);
-
-    console.log("Extracting archive: " + url);
+    console.log("Extracting archive: " + archivePath);
 
     // delete any previously attempted extraction directory
 
@@ -206,7 +195,7 @@ var downloadArchive = function(url, omitExtensionCheck) {
     mkdir("-p", targetPath);
 
     if (isZip) {
-      if (process.platform == "win32") {
+      if (process.platform == "win32" && archivePath != null) {
         let escapedFile = archivePath
           .replace(/'/g, "''")
           .replace(/"|\n|\r/g, ""); // double-up single quotes, remove double quotes and newlines
