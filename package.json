@@ -20,7 +20,6 @@
   "homepage": "https://github.com/shubham90/gh-pkg-action#readme",
   "dependencies": {
     "@actions/core": "^1.2.0",
-    "@actions/github": "^1.1.0",
     "@types/q": "^1.5.2",
     "fs-extra": "8.1.0",
     "shelljs": "^0.3.0",
