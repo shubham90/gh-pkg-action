@@ -27,5 +27,6 @@ export function getSystemAccessToken(): string {
 }
 
 export function getCollectionUrl(): string {
+    console.log(core.getInput("azure-devops-org-url"));
     return core.getInput("azure-devops-org-url");
   }
