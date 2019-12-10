@@ -1,18 +1,16 @@
-# Hello world action
+# Nuget Auth Action
 
-This action prints "Hello World" or "Hello" + the name of a person to greet to the log.
+This action authenticates your nuget azure artifacts feed.
 
 ## Inputs
 
-### `who-to-greet`
+### `azure-devops-org-url`
 
-**Required** The name of the person to greet. Default `"World"`.
+**Required** The azure devops url.
 
-## Outputs
+### `azure-devops-token`
 
-### `time`
-
-The time we greeted you.
+**Required** The azure devops PAT.
 
 ## Example usage
 
