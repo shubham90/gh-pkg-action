@@ -14,7 +14,9 @@ This action authenticates your nuget azure artifacts feed.
 
 ## Example usage
 
+```
 uses: shubham90/gh-pkg-action@v2
   with:
     azure-devops-org-url: 'https://dev.azure.com/account_name'
     azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'
+```
