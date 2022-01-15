@@ -23,7 +23,7 @@
     "@actions/github": "^1.1.0",
     "@types/q": "^1.5.2",
     "fs-extra": "8.1.0",
-    "shelljs": "^0.3.0",
+    "shelljs": "^0.8.5",
     "sync-request": "6.1.0"
   },
   "devDependencies": {
